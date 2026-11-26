@@ -58,4 +58,40 @@ public class JugadorDAO {
         }
         return j;
     }
+        
+            public int insertar(Jugador j) {
+        int id = -1;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement cuenta = con.prepareStatement("SELECT COUNT(*) FROM jugador WHERE equipo_id = ?");
+            cuenta.setInt(1, j.getEquipoId());
+            ResultSet rc = cuenta.executeQuery();
+            rc.next();
+            int total = rc.getInt(1);
+            rc.close();
+            cuenta.close();
+            if (total < 7) {
+                PreparedStatement ps = con.prepareStatement(
+                        "INSERT INTO jugador (equipo_id, rol_id, nick, nombre, edad) VALUES (?, ?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, j.getEquipoId());
+                ps.setInt(2, j.getRolId());
+                ps.setString(3, j.getNick());
+                ps.setString(4, j.getNombre());
+                ps.setInt(5, j.getEdad());
+                ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    id = rs.getInt(1);
+                    j.setId(id);
+                }
+                rs.close();
+                ps.close();
+            }
+            con.close();
+        } catch (SQLException e) {
+            id = -1;
+        }
+        return id;
+    }
 }
