@@ -59,4 +59,28 @@ public class EquipoDAO {
         }
         return e;
     }
+        
+            public int insertar(Equipo e) {
+        int id = -1;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO equipo (nombre, ciudad, fundacion, logo) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getCiudad());
+            ps.setInt(3, e.getFundacion());
+            ps.setString(4, e.getLogo());
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+                e.setId(id);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException ex) {
+            id = -1;
+        }
+        return id;
+    }
 }
