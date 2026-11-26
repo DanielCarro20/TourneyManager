@@ -53,4 +53,26 @@ public class JuegoDAO {
         }
         return j;
     }
+        
+        
+            public int insertar(Juego j) {
+        int id = -1;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO juego (nombre) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, j.getNombre());
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+                j.setId(id);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            id = -1;
+        }
+        return id;
+    }
 }
