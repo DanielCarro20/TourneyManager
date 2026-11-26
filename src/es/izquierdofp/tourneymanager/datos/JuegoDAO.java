@@ -91,4 +91,19 @@ public class JuegoDAO {
         }
         return ok;
     }
+                
+                    public boolean eliminar(int id) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("DELETE FROM juego WHERE id = ?");
+            ps.setInt(1, id);
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
 }
