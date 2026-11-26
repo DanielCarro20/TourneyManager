@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.PreparedStatement;
 
 public class JugadorDAO {
 
@@ -37,5 +38,24 @@ public class JugadorDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+    
+        public Jugador obtener(int id) {
+        Jugador j = null;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM jugador WHERE id = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                j = mapear(rs);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return j;
     }
 }
