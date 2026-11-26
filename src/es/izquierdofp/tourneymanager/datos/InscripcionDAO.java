@@ -161,5 +161,68 @@ public class InscripcionDAO {
         return id;
     }
 
-
+    public boolean actualizar(Inscripcion i) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            boolean permitido = true;
+            if (contarPorTorneo(con, i.getTorneoId(), i.getId()) >= 16) {
+                permitido = false;
+            }
+            if (permitido && i.getPosicion() != null && posicionOcupada(con, i.getTorneoId(), i.getPosicion(), i.getId())) {
+                permitido = false;
+            }
+            if (permitido) {
+                PreparedStatement ps = con.prepareStatement("UPDATE inscripcion SET equipo_id = ?, torneo_id = ?, posicion = ? WHERE id = ?");
+                ps.setInt(1, i.getEquipoId());
+                ps.setInt(2, i.getTorneoId());
+                if (i.getPosicion() == null) {
+                    ps.setNull(3, Types.INTEGER);
+                } else {
+                    ps.setInt(3, i.getPosicion());
+                }
+                ps.setInt(4, i.getId());
+                ok = ps.executeUpdate() > 0;
+                ps.close();
+            }
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
+ 
+    public boolean eliminar(int id) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("DELETE FROM inscripcion WHERE id = ?");
+            ps.setInt(1, id);
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
+ 
+    public int contar() {
+        int total = 0;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM inscripcion");
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+            rs.close();
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+    
 }
