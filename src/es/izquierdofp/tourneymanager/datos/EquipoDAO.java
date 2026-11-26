@@ -134,5 +134,19 @@ public class EquipoDAO {
         }
         return total;
     }
+                        
+                            public List<Equipo> buscar(String texto) {
+        List<Equipo> resultado = new ArrayList<>();
+        if (texto == null) {
+            texto = "";
+        }
+        String t = texto.toLowerCase();
+        for (Equipo e : listar()) {
+            if (e.getNombre().toLowerCase().contains(t) || e.getCiudad().toLowerCase().contains(t)) {
+                resultado.add(e);
+            }
+        }
+        return resultado;
+    }
             
 }
