@@ -172,4 +172,23 @@ public class JugadorDAO {
         }
         return resultado;
     }
+                            
+                                public List<Jugador> listarPorEquipo(int equipoId) {
+        List<Jugador> lista = new ArrayList<>();
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM jugador WHERE equipo_id = ? ORDER BY nick");
+            ps.setInt(1, equipoId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
 }
