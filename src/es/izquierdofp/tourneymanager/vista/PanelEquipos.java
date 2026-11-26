@@ -1,11 +1,14 @@
 package es.izquierdofp.tourneymanager.vista;
 
 import es.izquierdofp.tourneymanager.datos.EquipoDAO;
+import es.izquierdofp.tourneymanager.datos.JugadorDAO;
 import es.izquierdofp.tourneymanager.modelo.Equipo;
+import es.izquierdofp.tourneymanager.modelo.Jugador;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -13,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -26,6 +30,13 @@ public class PanelEquipos extends JPanel implements PanelDatos {
     private final EquipoTableModel modelo = new EquipoTableModel();
     private final JTable tabla = new JTable(modelo);
     private final JTextField txtBuscar = new JTextField(20);
+    private final JugadorDAO daoJugadores = new JugadorDAO();
+    private final JugadorTableModel modeloJugadores = new JugadorTableModel();
+    private final JTable tablaJugadores = new JTable(modeloJugadores);
+    private final JLabel lblJugadores = new JLabel(" ");
+    private final JButton btnAnadirJugador = new JButton("Añadir");
+    private final JButton btnEditarJugador = new JButton("Editar");
+    private final JButton btnQuitarJugador = new JButton("Quitar");
     private Runnable alCambiar = () -> {
     };
 
@@ -84,9 +95,33 @@ public class PanelEquipos extends JPanel implements PanelDatos {
             }
         });
 
-        add(arriba, BorderLayout.NORTH);
-        add(new JScrollPane(tabla), BorderLayout.CENTER);
-        add(abajo, BorderLayout.SOUTH);
+        JPanel superior = new JPanel(new BorderLayout(5, 5));
+        superior.add(arriba, BorderLayout.NORTH);
+        superior.add(new JScrollPane(tabla), BorderLayout.CENTER);
+        superior.add(abajo, BorderLayout.SOUTH);
+
+        tablaJugadores.setRowSorter(new TableRowSorter<>(modeloJugadores));
+        btnAnadirJugador.addActionListener(e -> anadirJugador());
+        btnEditarJugador.addActionListener(e -> editarJugador());
+        btnQuitarJugador.addActionListener(e -> quitarJugador());
+        JPanel botonesJugadores = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        botonesJugadores.add(btnAnadirJugador);
+        botonesJugadores.add(btnEditarJugador);
+        botonesJugadores.add(btnQuitarJugador);
+        JPanel inferior = new JPanel(new BorderLayout(5, 5));
+        inferior.add(lblJugadores, BorderLayout.NORTH);
+        inferior.add(new JScrollPane(tablaJugadores), BorderLayout.CENTER);
+        inferior.add(botonesJugadores, BorderLayout.SOUTH);
+
+        JSplitPane division = new JSplitPane(JSplitPane.VERTICAL_SPLIT, superior, inferior);
+        division.setResizeWeight(0.6);
+        add(division, BorderLayout.CENTER);
+
+        tabla.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                cargarJugadores();
+            }
+        });
 
         refrescar();
     }
@@ -97,6 +132,83 @@ public class PanelEquipos extends JPanel implements PanelDatos {
             if (fila >= 0) {
                 tabla.setRowSelectionInterval(fila, fila);
                 menu.show(tabla, e.getX(), e.getY());
+            }
+        }
+    }
+
+    private Equipo equipoSeleccionado() {
+        int fila = tabla.getSelectedRow();
+        if (fila < 0) {
+            return null;
+        }
+        return modelo.getEquipo(tabla.convertRowIndexToModel(fila));
+    }
+
+    private void cargarJugadores() {
+        Equipo e = equipoSeleccionado();
+        if (e == null) {
+            modeloJugadores.cargar(new ArrayList<>());
+            lblJugadores.setText(" ");
+        } else {
+            modeloJugadores.cargar(daoJugadores.listarPorEquipo(e.getId()));
+            lblJugadores.setText("Jugadores de " + e.getNombre() + " (" + modeloJugadores.getRowCount() + "/7)");
+        }
+        boolean hayEquipo = e != null;
+        btnAnadirJugador.setEnabled(hayEquipo);
+        btnEditarJugador.setEnabled(hayEquipo);
+        btnQuitarJugador.setEnabled(hayEquipo);
+    }
+
+    private Jugador jugadorSeleccionado() {
+        int fila = tablaJugadores.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this, "Selecciona un jugador de la tabla.");
+            return null;
+        }
+        return modeloJugadores.getJugador(tablaJugadores.convertRowIndexToModel(fila));
+    }
+
+    private void anadirJugador() {
+        Equipo e = equipoSeleccionado();
+        if (e == null) {
+            return;
+        }
+        JugadorDialog dialogo = new JugadorDialog(SwingUtilities.getWindowAncestor(this), null, e.getId());
+        dialogo.setVisible(true);
+        if (dialogo.isGuardado()) {
+            cargarJugadores();
+            alCambiar.run();
+        }
+    }
+
+    private void editarJugador() {
+        Equipo e = equipoSeleccionado();
+        Jugador j = jugadorSeleccionado();
+        if (e == null || j == null) {
+            return;
+        }
+        JugadorDialog dialogo = new JugadorDialog(SwingUtilities.getWindowAncestor(this), j, e.getId());
+        dialogo.setVisible(true);
+        if (dialogo.isGuardado()) {
+            cargarJugadores();
+            alCambiar.run();
+        }
+    }
+
+    private void quitarJugador() {
+        Jugador j = jugadorSeleccionado();
+        if (j == null) {
+            return;
+        }
+        int respuesta = JOptionPane.showConfirmDialog(this,
+                "¿Quitar al jugador \"" + j.getNick() + "\" del equipo?",
+                "Confirmar borrado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (respuesta == JOptionPane.YES_OPTION) {
+            if (daoJugadores.eliminar(j.getId())) {
+                cargarJugadores();
+                alCambiar.run();
+            } else {
+                JOptionPane.showMessageDialog(this, "No se ha podido quitar al jugador.");
             }
         }
     }
@@ -113,6 +225,7 @@ public class PanelEquipos extends JPanel implements PanelDatos {
     @Override
     public void refrescar() {
         modelo.cargar(dao.buscar(txtBuscar.getText().trim()));
+        cargarJugadores();
     }
 
     @Override
