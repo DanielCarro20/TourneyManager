@@ -83,4 +83,24 @@ public class EquipoDAO {
         }
         return id;
     }
+            
+                public boolean actualizar(Equipo e) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE equipo SET nombre = ?, ciudad = ?, fundacion = ?, logo = ? WHERE id = ?");
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getCiudad());
+            ps.setInt(3, e.getFundacion());
+            ps.setString(4, e.getLogo());
+            ps.setInt(5, e.getId());
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException ex) {
+            ok = false;
+        }
+        return ok;
+    }
+            
 }
