@@ -63,5 +63,43 @@ public class InscripcionDAO {
         return i;
     }
  
-    
+        public List<Inscripcion> listarPorEquipo(int equipoId) {
+        List<Inscripcion> lista = new ArrayList<>();
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM inscripcion WHERE equipo_id = ? ORDER BY torneo_id");
+            ps.setInt(1, equipoId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+ 
+    public List<Inscripcion> listarPorTorneo(int torneoId) {
+        List<Inscripcion> lista = new ArrayList<>();
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM inscripcion WHERE torneo_id = ? ORDER BY posicion IS NULL, posicion");
+            ps.setInt(1, torneoId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+ 
+
 }
