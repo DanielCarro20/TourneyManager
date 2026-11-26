@@ -117,5 +117,22 @@ public class EquipoDAO {
         }
         return ok;
     }
+                        public int contar() {
+        int total = 0;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM equipo");
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+            rs.close();
+            st.close();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return total;
+    }
             
 }
