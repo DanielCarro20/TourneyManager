@@ -36,6 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             PanelDatos p = panelActivo();
             if (p != null) p.eliminar();
         });
+                    itemExportar.addActionListener(e -> exportarCsv());
     }
        
            private PanelDatos panelActivo() {
@@ -45,12 +46,68 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         return null;
     }
+           
+               private java.io.File elegirArchivoCsv() {
+        javax.swing.JFileChooser selector = new javax.swing.JFileChooser();
+        selector.setDialogTitle("Exportar a CSV");
+        selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Archivos CSV (*.csv)", "csv"));
+        if (selector.showSaveDialog(this) != javax.swing.JFileChooser.APPROVE_OPTION) {
+            return null;
+        }
+        java.io.File archivo = selector.getSelectedFile();
+        if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+            archivo = new java.io.File(archivo.getParentFile(), archivo.getName() + ".csv");
+        }
+        return archivo;
+    }
 
+         private String celdaCsv(Object valor) {
+        String texto = valor == null ? "" : valor.toString();
+        if (texto.contains(";") || texto.contains("\"") || texto.contains("\n")) {
+            texto = "\"" + texto.replace("\"", "\"\"") + "\"";
+        }
+        return texto;
+    }
+
+    private void escribirCsv(javax.swing.JTable tabla, java.io.File archivo) throws java.io.IOException {
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(archivo, "UTF-8")) {
+            pw.print('\uFEFF');
+            StringBuilder linea = new StringBuilder();
+            for (int c = 0; c < tabla.getColumnCount(); c++) {
+                if (c > 0) linea.append(';');
+                linea.append(celdaCsv(tabla.getColumnName(c)));
+            }
+            pw.println(linea);
+            for (int f = 0; f < tabla.getRowCount(); f++) {
+                linea = new StringBuilder();
+                for (int c = 0; c < tabla.getColumnCount(); c++) {
+                    if (c > 0) linea.append(';');
+                    linea.append(celdaCsv(tabla.getValueAt(f, c)));
+                }
+                pw.println(linea);
+            }
+        }
+    }
+        private void exportarCsv() {
+        PanelDatos p = panelActivo();
+        if (p == null) return;
+        java.io.File archivo = elegirArchivoCsv();
+        if (archivo == null) return;
+        try {
+            escribirCsv(p.getTabla(), archivo);
+            javax.swing.JOptionPane.showMessageDialog(this, "Exportadas " + p.getTabla().getRowCount() + " filas a " + archivo.getName());
+        } catch (java.io.IOException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo guardar el archivo: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+               
     private void actualizarEstado() {
         lblEquipos.setText("Equipos: " + new EquipoDAO().contar());
         lblJugadores.setText("Jugadores: " + new JugadorDAO().contar());
         lblTorneos.setText("Torneos: " + new TorneoDAO().contar());
     }
+    
+    
     
     
 
