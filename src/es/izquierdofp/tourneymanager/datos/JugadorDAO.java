@@ -94,4 +94,36 @@ public class JugadorDAO {
         }
         return id;
     }
+            
+            
+                public boolean actualizar(Jugador j) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement cuenta = con.prepareStatement("SELECT COUNT(*) FROM jugador WHERE equipo_id = ? AND id <> ?");
+            cuenta.setInt(1, j.getEquipoId());
+            cuenta.setInt(2, j.getId());
+            ResultSet rc = cuenta.executeQuery();
+            rc.next();
+            int total = rc.getInt(1);
+            rc.close();
+            cuenta.close();
+            if (total < 7) {
+                PreparedStatement ps = con.prepareStatement(
+                        "UPDATE jugador SET equipo_id = ?, rol_id = ?, nick = ?, nombre = ?, edad = ? WHERE id = ?");
+                ps.setInt(1, j.getEquipoId());
+                ps.setInt(2, j.getRolId());
+                ps.setString(3, j.getNick());
+                ps.setString(4, j.getNombre());
+                ps.setInt(5, j.getEdad());
+                ps.setInt(6, j.getId());
+                ok = ps.executeUpdate() > 0;
+                ps.close();
+            }
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
 }
