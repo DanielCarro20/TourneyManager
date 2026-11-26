@@ -28,18 +28,26 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        pestanas = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        lblEquipos = new javax.swing.JLabel();
+        lblJugadores = new javax.swing.JLabel();
+        lblTorneos = new javax.swing.JLabel();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("TourneyManager");
+        getContentPane().add(pestanas, java.awt.BorderLayout.CENTER);
+
+        lblEquipos.setText("jLabel1");
+        jPanel1.add(lblEquipos);
+
+        lblJugadores.setText("jLabel2");
+        jPanel1.add(lblJugadores);
+
+        lblTorneos.setText("jLabel3");
+        jPanel1.add(lblTorneos);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -70,5 +78,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblEquipos;
+    private javax.swing.JLabel lblJugadores;
+    private javax.swing.JLabel lblTorneos;
+    private javax.swing.JTabbedPane pestanas;
     // End of variables declaration//GEN-END:variables
 }
