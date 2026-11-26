@@ -158,4 +158,18 @@ public class JugadorDAO {
         }
         return total;
     }
+                        
+                            public List<Jugador> buscar(String texto) {
+        List<Jugador> resultado = new ArrayList<>();
+        if (texto == null) {
+            texto = "";
+        }
+        String t = texto.toLowerCase();
+        for (Jugador j : listar()) {
+            if (j.getNick().toLowerCase().contains(t) || j.getNombre().toLowerCase().contains(t)) {
+                resultado.add(j);
+            }
+        }
+        return resultado;
+    }
 }
