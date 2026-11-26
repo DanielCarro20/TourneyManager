@@ -97,5 +97,56 @@ public class TorneoDAO {
         return id;
     }
  
-
+    public boolean actualizar(Torneo t) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE torneo SET nombre = ?, juego_id = ?, fecha = ?, premio = ?, online = ? WHERE id = ?");
+            ps.setString(1, t.getNombre());
+            ps.setInt(2, t.getJuegoId());
+            ps.setString(3, t.getFecha());
+            ps.setDouble(4, t.getPremio());
+            ps.setInt(5, t.isOnline() ? 1 : 0);
+            ps.setInt(6, t.getId());
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
+ 
+    public boolean eliminar(int id) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("DELETE FROM torneo WHERE id = ?");
+            ps.setInt(1, id);
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
+ 
+    public int contar() {
+        int total = 0;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM torneo");
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+            rs.close();
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
 }
