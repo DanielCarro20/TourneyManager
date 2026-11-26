@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.PreparedStatement;
+
+
 
 public class EquipoDAO {
 
@@ -36,5 +39,24 @@ public class EquipoDAO {
             ex.printStackTrace();
         }
         return lista;
+    }
+    
+        public Equipo obtener(int id) {
+        Equipo e = null;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM equipo WHERE id = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                e = mapear(rs);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return e;
     }
 }
