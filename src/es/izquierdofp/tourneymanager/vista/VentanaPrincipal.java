@@ -33,6 +33,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         lblEquipos = new javax.swing.JLabel();
         lblJugadores = new javax.swing.JLabel();
         lblTorneos = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        itemExportar = new javax.swing.JMenuItem();
+        itemSalir = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        itemNuevo = new javax.swing.JMenuItem();
+        itemEditar = new javax.swing.JMenuItem();
+        itemEliminar = new javax.swing.JMenuItem();
+        itemCatalogos = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        itemTemaOscuro = new javax.swing.JCheckBoxMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        itemAcercaDe = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TourneyManager");
@@ -49,8 +62,70 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
+        jMenu1.setText("Archivo");
+
+        itemExportar.setText("Exportar CSV...");
+        jMenu1.add(itemExportar);
+
+        itemSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemSalir.setText("Salir");
+        itemSalir.addActionListener(this::itemSalirActionPerformed);
+        jMenu1.add(itemSalir);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edición");
+
+        itemNuevo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemNuevo.setText("Nuevo");
+        itemNuevo.addActionListener(this::itemNuevoActionPerformed);
+        jMenu2.add(itemNuevo);
+
+        itemEditar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemEditar.setText("Editar");
+        jMenu2.add(itemEditar);
+
+        itemEliminar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        itemEliminar.setText("Eliminar");
+        jMenu2.add(itemEliminar);
+
+        itemCatalogos.setText("Catálogos...");
+        itemCatalogos.addActionListener(this::itemCatalogosActionPerformed);
+        jMenu2.add(itemCatalogos);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Ver");
+
+        itemTemaOscuro.setSelected(true);
+        itemTemaOscuro.setText("Tema oscuro");
+        jMenu3.add(itemTemaOscuro);
+
+        jMenuBar1.add(jMenu3);
+
+        jMenu4.setText("Ayuda");
+
+        itemAcercaDe.setText("Acerca de...");
+        jMenu4.add(itemAcercaDe);
+
+        jMenuBar1.add(jMenu4);
+
+        setJMenuBar(jMenuBar1);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_itemSalirActionPerformed
+
+    private void itemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNuevoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_itemNuevoActionPerformed
+
+    private void itemCatalogosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemCatalogosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_itemCatalogosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,6 +153,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem itemAcercaDe;
+    private javax.swing.JMenuItem itemCatalogos;
+    private javax.swing.JMenuItem itemEditar;
+    private javax.swing.JMenuItem itemEliminar;
+    private javax.swing.JMenuItem itemExportar;
+    private javax.swing.JMenuItem itemNuevo;
+    private javax.swing.JMenuItem itemSalir;
+    private javax.swing.JCheckBoxMenuItem itemTemaOscuro;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblEquipos;
     private javax.swing.JLabel lblJugadores;
