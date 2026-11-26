@@ -58,4 +58,44 @@ public class TorneoDAO {
         }
         return t;
     }
+        public List<Torneo> buscar(String texto) {
+        List<Torneo> resultado = new ArrayList<>();
+        if (texto == null) {
+            texto = "";
+        }
+        String t = texto.toLowerCase();
+        for (Torneo torneo : listar()) {
+            if (torneo.getNombre().toLowerCase().contains(t)) {
+                resultado.add(torneo);
+            }
+        }
+        return resultado;
+    }
+ 
+    public int insertar(Torneo t) {
+        int id = -1;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO torneo (nombre, juego_id, fecha, premio, online) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, t.getNombre());
+            ps.setInt(2, t.getJuegoId());
+            ps.setString(3, t.getFecha());
+            ps.setDouble(4, t.getPremio());
+            ps.setInt(5, t.isOnline() ? 1 : 0);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+                t.setId(id);
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            id = -1;
+        }
+        return id;
+    }
+ 
+
 }
