@@ -100,6 +100,66 @@ public class InscripcionDAO {
         }
         return lista;
     }
+     private int contarPorTorneo(Connection con, int torneoId, int excluirId) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM inscripcion WHERE torneo_id = ? AND id <> ?");
+        ps.setInt(1, torneoId);
+        ps.setInt(2, excluirId);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int total = rs.getInt(1);
+        rs.close();
+        ps.close();
+        return total;
+    }
  
+    private boolean posicionOcupada(Connection con, int torneoId, int posicion, int excluirId) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM inscripcion WHERE torneo_id = ? AND posicion = ? AND id <> ?");
+        ps.setInt(1, torneoId);
+        ps.setInt(2, posicion);
+        ps.setInt(3, excluirId);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        boolean ocupada = rs.getInt(1) > 0;
+        rs.close();
+        ps.close();
+        return ocupada;
+    }
+ 
+    public int insertar(Inscripcion i) {
+        int id = -1;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            boolean permitido = true;
+            if (contarPorTorneo(con, i.getTorneoId(), 0) >= 16) {
+                permitido = false;
+            }
+            if (permitido && i.getPosicion() != null && posicionOcupada(con, i.getTorneoId(), i.getPosicion(), 0)) {
+                permitido = false;
+            }
+            if (permitido) {
+                PreparedStatement ps = con.prepareStatement("INSERT INTO inscripcion (equipo_id, torneo_id, posicion) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, i.getEquipoId());
+                ps.setInt(2, i.getTorneoId());
+                if (i.getPosicion() == null) {
+                    ps.setNull(3, Types.INTEGER);
+                } else {
+                    ps.setInt(3, i.getPosicion());
+                }
+                ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    id = rs.getInt(1);
+                    i.setId(id);
+                }
+                rs.close();
+                ps.close();
+            }
+            con.close();
+        } catch (SQLException e) {
+            id = -1;
+        }
+        return id;
+    }
+
 
 }
