@@ -75,4 +75,20 @@ public class JuegoDAO {
         }
         return id;
     }
+            
+                public boolean actualizar(Juego j) {
+        boolean ok = false;
+        try {
+            Connection con = DatabaseManager.getConnection();
+            PreparedStatement ps = con.prepareStatement("UPDATE juego SET nombre = ? WHERE id = ?");
+            ps.setString(1, j.getNombre());
+            ps.setInt(2, j.getId());
+            ok = ps.executeUpdate() > 0;
+            ps.close();
+            con.close();
+        } catch (SQLException e) {
+            ok = false;
+        }
+        return ok;
+    }
 }
