@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package es.izquierdofp.tourneymanager.vista;
+import es.izquierdofp.tourneymanager.datos.EquipoDAO;
+import es.izquierdofp.tourneymanager.datos.JugadorDAO;
+import es.izquierdofp.tourneymanager.datos.TorneoDAO;
 
 /**
  *
@@ -15,9 +18,41 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPrincipal
      */
-    public VentanaPrincipal() {
+        private PanelEquipos panelEquipos;
+
+          public VentanaPrincipal() {
         initComponents();
+        setSize(1000, 650);
+        setLocationRelativeTo(null);
+        panelEquipos = new PanelEquipos();
+        pestanas.addTab("Equipos", panelEquipos);
+        panelEquipos.setAlCambiar(this::actualizarEstado);
+        actualizarEstado();
+        itemEditar.addActionListener(e -> {
+            PanelDatos p = panelActivo();
+            if (p != null) p.editar();
+        });
+        itemEliminar.addActionListener(e -> {
+            PanelDatos p = panelActivo();
+            if (p != null) p.eliminar();
+        });
     }
+       
+           private PanelDatos panelActivo() {
+        java.awt.Component c = pestanas.getSelectedComponent();
+        if (c instanceof PanelDatos) {
+            return (PanelDatos) c;
+        }
+        return null;
+    }
+
+    private void actualizarEstado() {
+        lblEquipos.setText("Equipos: " + new EquipoDAO().contar());
+        lblJugadores.setText("Jugadores: " + new JugadorDAO().contar());
+        lblTorneos.setText("Torneos: " + new TorneoDAO().contar());
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -116,15 +151,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed
-        // TODO add your handling code here:
+                System.exit(0);
     }//GEN-LAST:event_itemSalirActionPerformed
 
     private void itemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNuevoActionPerformed
-        // TODO add your handling code here:
+                PanelDatos p = panelActivo();
+        if (p != null) p.nuevo();
     }//GEN-LAST:event_itemNuevoActionPerformed
 
     private void itemCatalogosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemCatalogosActionPerformed
-        // TODO add your handling code here:
+                new CatalogosDialog(this).setVisible(true);
+        panelEquipos.refrescar();
+        actualizarEstado();
     }//GEN-LAST:event_itemCatalogosActionPerformed
 
     /**
