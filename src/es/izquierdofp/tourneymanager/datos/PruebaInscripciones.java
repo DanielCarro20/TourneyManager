@@ -1,7 +1,7 @@
 package es.izquierdofp.tourneymanager.datos;
  
 import es.izquierdofp.tourneymanager.modelo.Inscripcion;
- 
+
 public class PruebaInscripciones {
  
     public static void main(String[] args) {

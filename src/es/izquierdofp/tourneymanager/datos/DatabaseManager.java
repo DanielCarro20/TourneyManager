@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 public class DatabaseManager {
 
@@ -92,9 +93,8 @@ public class DatabaseManager {
                         + "('Teruel Storm', 'Teruel', 2019), "
                         + "('Calatayud Kings', 'Calatayud', 2014), "
                         + "('Jaca Pirineos', 'Jaca', 2021)");
-                
-                
-                                st.execute("INSERT INTO jugador (equipo_id, rol_id, nick, nombre, edad) VALUES "
+
+                st.execute("INSERT INTO jugador (equipo_id, rol_id, nick, nombre, edad) VALUES "
                         + "(1, 1, 'Kaze', 'Pablo Ortiz', 23), "
                         + "(1, 2, 'Nimbus', 'Sara Gil', 21), "
                         + "(1, 2, 'Bruma', 'Hugo Lasa', 20), "
@@ -131,6 +131,20 @@ public class DatabaseManager {
                         + "(8, 2, 'Aneto', 'Laura Bernad', 21), "
                         + "(8, 2, 'Canfranc', 'Ismael Oliva', 20), "
                         + "(8, 3, 'Pirineo', 'Noelia Sanz', 18)");
+                
+                LocalDate hoy = LocalDate.now();
+                st.execute("INSERT INTO torneo (nombre, juego_id, fecha, premio, online) VALUES "
+                        + "('Copa Cierzo de Invierno', 1, '" + hoy.minusDays(60) + "', 500, 0), "
+                        + "('Liga Aragonesa de Valorant', 2, '" + hoy.minusDays(20) + "', 300, 1), "
+                        + "('Torneo Rocket del Pilar', 3, '" + hoy.plusDays(3) + "', 250, 0), "
+                        + "('Copa EA FC Zaragoza', 4, '" + hoy.plusDays(25) + "', 400, 1), "
+                        + "('Fortnite Ebro Cup', 5, '" + hoy.plusDays(50) + "', 200, 1), "
+                        + "('Gran Final de la Temporada', 1, '" + hoy.plusDays(80) + "', 1000, 0)");
+                st.execute("INSERT INTO inscripcion (equipo_id, torneo_id, posicion) VALUES "
+                        + "(1, 1, 1), (3, 1, 2), (2, 1, 3), (5, 1, 4), (4, 1, 5), (6, 1, 6), (7, 1, 7), (8, 1, 8), "
+                        + "(2, 2, 1), (1, 2, 2), (4, 2, 3), (3, 2, 4), (7, 2, 5), (5, 2, 6), (6, 2, 7), "
+                        + "(1, 3, NULL), (2, 3, NULL), (3, 3, NULL)");
+
             }
 
             st.close();
